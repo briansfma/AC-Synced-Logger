@@ -27,6 +27,9 @@ class GReadout:
         
         self.currentLatG = self.oldLatG * filter + x * (1-filter)
         self.currentLonG = self.oldLonG * filter + z * (1-filter)
+        
+        self.oldLatG = self.currentLatG
+        self.oldLonG = self.currentLonG
 
         ac.setText(self.l_lat_g, "Lat. G: {:04.2f}".format(self.currentLatG))
         ac.setText(self.l_lon_g, "Lon. G: {:04.2f}".format(self.currentLonG))
