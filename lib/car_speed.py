@@ -12,7 +12,7 @@ class SpeedReadout:
         self.currentSpeed = 0
         self.oldSpeed = 0
 
-        # Init and display labels for lateral, longitudinal G's
+        # Init and display labels for speed
         self.l_speed = ac.addLabel(appWindow, "Speed: 0.00");
         ac.setPosition(self.l_speed, x, y)
     

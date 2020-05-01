@@ -5,14 +5,14 @@ import acsys
 
 class InputReadout:
     def __init__(self, appWindow, x, y):
-        # Init containers for low-pass filtering of raw data
+        # Init containers for displaying raw data
         self.gas = 0
         self.brake = 0
         self.clutch = 0
         self.gear = 0
         self.steer = 0
 
-        # Init and display labels for lateral, longitudinal G's
+        # Init and display labels for gas, brake, clutch, gear, steering
         self.l_gas = ac.addLabel(appWindow, "Gas: 0.00");
         ac.setPosition(self.l_gas, x, y)
         self.l_brake = ac.addLabel(appWindow, "Brake: 0.00");
