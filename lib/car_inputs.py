@@ -1,4 +1,4 @@
-# Script to handle acquisition of car G-force data
+# Script to handle acquisition of controller inputs
 
 import ac
 import acsys

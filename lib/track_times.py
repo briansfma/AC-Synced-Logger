@@ -1,4 +1,4 @@
-# Script to handle acquisition of car G-force data
+# Script to handle acquisition of best/last/current lap data
 
 import sys
 import os
@@ -65,7 +65,7 @@ class LaptimeReadout:
         # Update lap count only when it happens
         laps = ac.getCarState(0, acsys.CS.LapCount)
         if (laps > self.lapCount):
-            self.lapCount += 1
+            self.lapCount = laps
             
             self.lastLap = ac.getCarState(0, acsys.CS.LastLap)
             mins, secs, tenths = self.convertMS(self.lastLap)
@@ -83,4 +83,7 @@ class LaptimeReadout:
                 ac.setText(self.l_bestLap, 
                            "Best Lap: {:d}:{:02d}.{:1d} ({:d})"
                            .format(mins, secs, tenths, self.bestLapNum))
+            
+            # New lap, new chance for valid lap
+            self.lapValid = True
 
