@@ -16,19 +16,21 @@ from lib.car_inputs import InputReadout
 from lib.car_g import GReadout
 from lib.car_speed import SpeedReadout
 from lib.track_times import LaptimeReadout
+from lib.perf_delta import DeltaReadout
 
 appWindow = 0
 car_inputs = 0
 car_g = 0
 car_speed = 0
 track_times = 0
+perf_delta = 0
 
 def acMain(ac_version):
-    global appWindow, car_inputs, car_g, car_speed, track_times
+    global appWindow, car_inputs, car_g, car_speed, track_times, perf_delta
 
     # Start new application in session
     appWindow = ac.newApp("SyncLogger")
-    ac.setSize(appWindow, 500, 100)
+    ac.setSize(appWindow, 500, 120)
     
     # Print initial log confirmation
     ac.log("SyncLogger says hi!")
@@ -39,13 +41,15 @@ def acMain(ac_version):
     car_g = GReadout(appWindow, 3, 48)
     car_speed = SpeedReadout(appWindow, 3, 66)
     track_times = LaptimeReadout(appWindow, 3, 84)
+    perf_delta = DeltaReadout(appWindow, 3, 102)
     
     return "SyncLogger"
 
 def acUpdate(deltaT):
-    global car_inputs, car_g, car_speed, track_times
+    global car_inputs, car_g, car_speed, track_times, perf_delta
     
     car_inputs.update()
     car_g.update()
     car_speed.update()
     track_times.update()
+    perf_delta.update(deltaT)
