@@ -14,13 +14,13 @@ class DeltaReadout:
         self.meter = 0
         self.oldMeter = 0
 
-        # Init and display labels for lateral, longitudinal G's
-        self.l_pos = ac.addLabel(appWindow, "Spline Pos: 0.00");
-        ac.setPosition(self.l_pos, x, y)
-        self.l_meter = ac.addLabel(appWindow, "Perf Meter: 0.00");
-        ac.setPosition(self.l_meter, x+150, y)
-        self.l_rate = ac.addLabel(appWindow, "Perf Gain Rate: 0.00");
-        ac.setPosition(self.l_rate, x+300, y)
+        # # Init and display labels for lateral, longitudinal G's
+        # self.l_pos = ac.addLabel(appWindow, "Spline Pos: 0.00");
+        # ac.setPosition(self.l_pos, x, y)
+        # self.l_meter = ac.addLabel(appWindow, "Perf Meter: 0.00");
+        # ac.setPosition(self.l_meter, x+150, y)
+        # self.l_rate = ac.addLabel(appWindow, "Perf Gain Rate: 0.00");
+        # ac.setPosition(self.l_rate, x+300, y)
     
     def update(self, deltaT):
         global filter
@@ -34,6 +34,9 @@ class DeltaReadout:
         rate = (self.oldMeter - self.meter)/deltaT
         self.oldMeter = self.meter
 
-        ac.setText(self.l_pos, "Spline Pos: {:06.4f}".format(self.pos))
-        ac.setText(self.l_meter, "Perf Meter: {:06.4f}".format(self.meter))
-        ac.setText(self.l_rate, "Perf Gain Rate: {:06.4f}".format(rate))
+        # # Update labels
+        # ac.setText(self.l_pos, "Spline Pos: {:06.4f}".format(self.pos))
+        # ac.setText(self.l_meter, "Perf Meter: {:06.4f}".format(self.meter))
+        # ac.setText(self.l_rate, "Perf Gain Rate: {:06.4f}".format(rate))
+        
+        return self.pos, self.meter, rate

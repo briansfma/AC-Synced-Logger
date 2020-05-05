@@ -3,14 +3,14 @@
 # AC Logger: Synchronized datalogging w/ frame capture for
 #            use with neural network training
 #
-# To activate create a folder with the same name as this file
-# in apps/python. Ex apps/python/tutorial01
-# Then copy this file inside it and launch AC
+# To activate, copy everything in this repository into
+# "apps/python/logger/" in your main Assetto Corsa directory.
 ##############################################################
 
 import sys
 import os
 import platform
+import csv
 import ac
 import acsys
 
@@ -36,6 +36,8 @@ car_speed = 0
 track_times = 0
 perf_delta = 0
 
+csvfile = 0
+writer = 0
 sct = 0
 monitor = 0
 recording = False
@@ -43,6 +45,7 @@ recButton = 0
 seq_num = 0
 frame_num = 0
 
+mon_select = 2
 folder = "apps/python/logger/captures/" # set dir for saving images
 
 def toggle(dummy, var):
@@ -59,17 +62,19 @@ def toggle(dummy, var):
 
 def acMain(ac_version):
     global appWindow, car_inputs, car_g, car_speed, track_times, perf_delta
-    global sct, monitor, recButton
+    global csvfile, writer
+    global sct, mon_select, monitor, recButton
 
     # Start new application in session
     appWindow = ac.newApp("SyncLogger")
-    ac.setSize(appWindow, 500, 160)
+    ac.setSize(appWindow, 200, 50)
     
     # Print initial log confirmation
     ac.log("SyncLogger says hi!")
     ac.console("SyncLogger says hi!")
     
     # Init individual readouts
+    #   Number values are for x/y positioning of readouts if enabled
     car_inputs = InputReadout(appWindow, 3, 30)
     car_g = GReadout(appWindow, 3, 48)
     car_speed = SpeedReadout(appWindow, 3, 66)
@@ -78,30 +83,49 @@ def acMain(ac_version):
     
     # Init screen reader object
     sct = mss.mss()
-    monitor = sct.monitors[2]               # Using 2nd monitor
+    monitor = sct.monitors[mon_select]  # select monitor
     
     recButton = ac.addButton(appWindow, "Start Recording")
-    ac.setPosition(recButton, 150, 135)
+    ac.setPosition(recButton, 0, 30)
     ac.setSize(recButton, 200, 20)
     ac.addOnClickedListener(recButton, toggle)
+    
+    csvfile = open(folder + 'data.csv', 'w', newline='')
+    writer = csv.writer(csvfile, delimiter=',', quotechar='"',
+                        quoting=csv.QUOTE_MINIMAL)
     
     return "SyncLogger"
 
 def acUpdate(deltaT):
     global car_inputs, car_g, car_speed, track_times, perf_delta
+    global writer
     global sct, folder, monitor, recording, seq_num, frame_num
     
     if recording:
-        car_inputs.update()
-        car_g.update()
-        car_speed.update()
-        track_times.update()
-        perf_delta.update(deltaT)
+        # Grab data
+        gas, brake, clutch, gear, steer = car_inputs.update()
+        lat_g, lon_g = car_g.update()
+        speed = car_speed.update()
+        lap_valid, curr_lap, best_lap = track_times.update()
+        pos, p_meter, p_rate = perf_delta.update(deltaT)
         
-        # Grab screen
+        # Grab screen frame
         im = sct.grab(monitor)          # type: ignore
-
-        # Save image frame in captures folder
+        
+        # Save screen frame in captures folder (PNG)
         filename = "{:02d}_{:06d}.png".format(seq_num, frame_num)
         mss.tools.to_png(im.rgb, im.size, output=(folder + filename))
         frame_num += 1
+        
+        # Save data in captures folder (CSV)
+        writer.writerow([filename,
+                         round(gas, 2), round(brake, 2), round(clutch, 1), 
+                         round(gear, 0), round(steer, 0),
+                         round(lat_g, 2), round(lon_g, 2), round(speed, 1),
+                         lap_valid, round(curr_lap/1000, 2), round(best_lap/1000, 2),
+                         round(pos, 5), p_meter, p_rate])
+
+def acShutdown():
+    global csvfile
+    
+    csvfile.close()

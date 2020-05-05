@@ -20,13 +20,13 @@ class LaptimeReadout:
         
         ac.console("Lap valid? {}".format(self.lapValid))
 
-        # Init and display labels for best, last and current lap
-        self.l_bestLap = ac.addLabel(appWindow, "Best Lap: 0:00.0");
-        ac.setPosition(self.l_bestLap, x, y)
-        self.l_lastLap = ac.addLabel(appWindow, "Last Lap: 0:00.0");
-        ac.setPosition(self.l_lastLap, x+150, y)
-        self.l_currentLap = ac.addLabel(appWindow, "Current Lap: 0:00.0 (I)");
-        ac.setPosition(self.l_currentLap, x+300, y)
+        # # Init and display labels for best, last and current lap
+        # self.l_bestLap = ac.addLabel(appWindow, "Best Lap: 0:00.0");
+        # ac.setPosition(self.l_bestLap, x, y)
+        # self.l_lastLap = ac.addLabel(appWindow, "Last Lap: 0:00.0");
+        # ac.setPosition(self.l_lastLap, x+150, y)
+        # self.l_currentLap = ac.addLabel(appWindow, "Current Lap: 0:00.0 (I)");
+        # ac.setPosition(self.l_currentLap, x+300, y)
     
     def convertMS(self, millis):
         tenths = int((millis/100)%10)
@@ -47,9 +47,9 @@ class LaptimeReadout:
         self.currentLap = ac.getCarState(0, acsys.CS.LapTime)
         mins, secs, tenths = self.convertMS(self.currentLap)
         
-        ac.setText(self.l_currentLap, 
-                   "Current Lap: {:d}:{:02d}.{:1d} ({})"
-                   .format(mins, secs, tenths, self.lapValid))
+        # ac.setText(self.l_currentLap, 
+        #            "Current Lap: {:d}:{:02d}.{:1d} ({})"
+        #            .format(mins, secs, tenths, self.lapValid))
         
         # Update lap count only when it happens
         laps = ac.getCarState(0, acsys.CS.LapCount)
@@ -59,9 +59,9 @@ class LaptimeReadout:
             self.lastLap = ac.getCarState(0, acsys.CS.LastLap)
             mins, secs, tenths = self.convertMS(self.lastLap)
                     
-            ac.setText(self.l_lastLap, 
-                       "Last Lap: {:d}:{:02d}.{:1d} ({})"
-                       .format(mins, secs, tenths, self.lapValid))
+            # ac.setText(self.l_lastLap, 
+            #            "Last Lap: {:d}:{:02d}.{:1d} ({})"
+            #            .format(mins, secs, tenths, self.lapValid))
             
             # Compare last lap to best lap only if valid
             if ((self.lastLap < self.bestLap or self.bestLap == 0)
@@ -69,10 +69,12 @@ class LaptimeReadout:
                 self.bestLapNum = laps
                 self.bestLap = self.lastLap
                 
-                ac.setText(self.l_bestLap, 
-                           "Best Lap: {:d}:{:02d}.{:1d} ({:d})"
-                           .format(mins, secs, tenths, self.bestLapNum))
+                # ac.setText(self.l_bestLap, 
+                #            "Best Lap: {:d}:{:02d}.{:1d} ({:d})"
+                #            .format(mins, secs, tenths, self.bestLapNum))
             
             # New lap, new chance for valid lap
             self.lapValid = True
+        
+        return self.lapValid, self.currentLap, self.bestLap
 

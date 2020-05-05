@@ -12,9 +12,9 @@ class SpeedReadout:
         self.currentSpeed = 0
         self.oldSpeed = 0
 
-        # Init and display labels for speed
-        self.l_speed = ac.addLabel(appWindow, "Speed: 0.00");
-        ac.setPosition(self.l_speed, x, y)
+        # # Init and display labels for speed
+        # self.l_speed = ac.addLabel(appWindow, "Speed: 0.00");
+        # ac.setPosition(self.l_speed, x, y)
     
     def update(self):
         global filter
@@ -24,4 +24,7 @@ class SpeedReadout:
         
         self.oldSpeed = self.currentSpeed
 
-        ac.setText(self.l_speed, "Speed: {:03.1f}".format(self.currentSpeed))
+        # # Update labels
+        # ac.setText(self.l_speed, "Speed: {:03.1f}".format(self.currentSpeed))
+        
+        return self.currentSpeed

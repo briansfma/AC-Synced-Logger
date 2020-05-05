@@ -14,11 +14,11 @@ class GReadout:
         self.oldLatG = 0
         self.oldLonG = 0
 
-        # Init and display labels for lateral, longitudinal G's
-        self.l_lat_g = ac.addLabel(appWindow, "Lat. G: 0.00");
-        ac.setPosition(self.l_lat_g, x, y)
-        self.l_lon_g = ac.addLabel(appWindow, "Lon. G: 0.00");
-        ac.setPosition(self.l_lon_g, x+100, y)
+        # # Init and display labels for lateral, longitudinal G's
+        # self.l_lat_g = ac.addLabel(appWindow, "Lat. G: 0.00");
+        # ac.setPosition(self.l_lat_g, x, y)
+        # self.l_lon_g = ac.addLabel(appWindow, "Lon. G: 0.00");
+        # ac.setPosition(self.l_lon_g, x+100, y)
     
     def update(self):
         global filter
@@ -31,5 +31,8 @@ class GReadout:
         self.oldLatG = self.currentLatG
         self.oldLonG = self.currentLonG
 
-        ac.setText(self.l_lat_g, "Lat. G: {:04.2f}".format(self.currentLatG))
-        ac.setText(self.l_lon_g, "Lon. G: {:04.2f}".format(self.currentLonG))
+        # # Update labels
+        # ac.setText(self.l_lat_g, "Lat. G: {:04.2f}".format(self.currentLatG))
+        # ac.setText(self.l_lon_g, "Lon. G: {:04.2f}".format(self.currentLonG))
+        
+        return self.currentLatG, self.currentLonG
