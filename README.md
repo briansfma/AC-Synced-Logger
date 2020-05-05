@@ -11,3 +11,6 @@ To activate this script, clone this directory within the `apps/python` folder in
 
 ## Usage
 The logger only has one control - recording or not. You can press the "Start Recording" button at any time during a session and it will begin capturing frames and data as Assetto Corsa serves it. Multiple start/stop recordings are handled gracefully via filename (prefix 01_ for the first recording, 02_ for the second, etc). The outputs (image frames and data CSV file) can be found in the `captures/` folder after the session has ended.
+
+## Credits
+Thanks to Mickaël Schoentgen for his project [`python-mss`](https://github.com/BoboTiG/python-mss), which powers the screen grab function of this utility.
