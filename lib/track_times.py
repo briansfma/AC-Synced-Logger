@@ -1,18 +1,7 @@
 # Script to handle acquisition of best/last/current lap data
 
-import sys
-import os
-import platform
 import ac
 import acsys
-
-# Fix import path for ctypes (needed for sim_info)
-if platform.architecture()[0] == "64bit":
-    sysdir = 'apps/python/logger/stdlib64'
-else:
-    sysdir = 'apps/python/logger/stdlib'
-sys.path.insert(0, sysdir)
-os.environ['PATH'] += ";."
 
 from sim_info import info
 
