@@ -45,7 +45,7 @@ recButton = 0
 seq_num = 0
 frame_num = 0
 
-mon_select = 2
+mon_select = 1
 folder = "apps/python/logger/captures/" # set dir for saving images
 
 def toggle(dummy, var):
@@ -70,8 +70,8 @@ def acMain(ac_version):
     ac.setSize(appWindow, 200, 50)
     
     # Print initial log confirmation
-    ac.log("SyncLogger says hi!")
-    ac.console("SyncLogger says hi!")
+    ac.log(__name__)
+    ac.console(__name__)
     
     # Init individual readouts
     #   Number values are for x/y positioning of readouts if enabled
@@ -81,14 +81,16 @@ def acMain(ac_version):
     track_times = LaptimeReadout(appWindow, 3, 84)
     perf_delta = DeltaReadout(appWindow, 3, 102)
     
-    # Init screen reader object
-    sct = mss.mss()
-    monitor = sct.monitors[mon_select]  # select monitor
-    
+    # Init Record button
     recButton = ac.addButton(appWindow, "Start Recording")
     ac.setPosition(recButton, 0, 30)
     ac.setSize(recButton, 200, 20)
     ac.addOnClickedListener(recButton, toggle)
+    
+    # Init screen reader helper
+    sct = mss.mss()
+    monitor = sct.monitors[mon_select]  # get data of monitor desired
+    monitor = sct.adj_monitor(monitor)
     
     csvfile = open(folder + 'data.csv', 'w', newline='')
     writer = csv.writer(csvfile, delimiter=',', quotechar='"',
@@ -110,7 +112,7 @@ def acUpdate(deltaT):
         pos, p_meter, p_rate = perf_delta.update(deltaT)
         
         # Grab screen frame
-        im = sct.grab(monitor)          # type: ignore
+        im = sct.grab(monitor)
         
         # Save screen frame in captures folder (PNG)
         filename = "{:02d}_{:06d}.png".format(seq_num, frame_num)
@@ -124,6 +126,7 @@ def acUpdate(deltaT):
                          round(lat_g, 2), round(lon_g, 2), round(speed, 1),
                          lap_valid, round(curr_lap/1000, 2), round(best_lap/1000, 2),
                          round(pos, 5), p_meter, p_rate])
+
 
 def acShutdown():
     global csvfile

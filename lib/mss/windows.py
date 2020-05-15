@@ -57,6 +57,7 @@ class MSS(MSSBase):
     _data = None
     _memdc = None
     _srcdc = None
+    _gdi = None
 
     def __init__(self):
         # type: () -> None
@@ -152,6 +153,29 @@ class MSS(MSSBase):
             ctypes.windll.user32.EnumDisplayMonitors(0, 0, callback, 0)
 
         return self._monitors
+    
+    def adj_monitor(self, monitor):
+        # Convert PIL bbox style
+        if isinstance(monitor, tuple):
+            monitor = {
+                "left": monitor[0],
+                "top": monitor[1],
+                "width": monitor[2] - monitor[0],
+                "height": monitor[3] - monitor[1],
+            }
+
+        self._gdi = ctypes.windll.gdi32
+        width, height = monitor["width"], monitor["height"]
+
+        if (self._bbox["height"], self._bbox["width"]) != (height, width):
+            self._bbox = monitor
+            self._bmi.bmiHeader.biWidth = width
+            self._bmi.bmiHeader.biHeight = -height  # Why minus? [1]
+            self._data = ctypes.create_string_buffer(width * height * 4)  # [2]
+            self._bmp = self._gdi.CreateCompatibleBitmap(self._srcdc, width, height)
+            self._gdi.SelectObject(self._memdc, self._bmp)
+        
+        return monitor
 
     def grab(self, monitor):
         # type: (Dict[str, int]) -> ScreenShot
@@ -185,27 +209,9 @@ class MSS(MSSBase):
             Thanks to http://stackoverflow.com/a/3688682
         """
 
-        # Convert PIL bbox style
-        if isinstance(monitor, tuple):
-            monitor = {
-                "left": monitor[0],
-                "top": monitor[1],
-                "width": monitor[2] - monitor[0],
-                "height": monitor[3] - monitor[1],
-            }
-
-        gdi = ctypes.windll.gdi32
         width, height = monitor["width"], monitor["height"]
-
-        if (self._bbox["height"], self._bbox["width"]) != (height, width):
-            self._bbox = monitor
-            self._bmi.bmiHeader.biWidth = width
-            self._bmi.bmiHeader.biHeight = -height  # Why minus? [1]
-            self._data = ctypes.create_string_buffer(width * height * 4)  # [2]
-            self._bmp = gdi.CreateCompatibleBitmap(self._srcdc, width, height)
-            gdi.SelectObject(self._memdc, self._bmp)
-
-        gdi.BitBlt(
+        
+        self._gdi.BitBlt(
             self._memdc,
             0,
             0,
@@ -216,7 +222,8 @@ class MSS(MSSBase):
             monitor["top"],
             SRCCOPY | CAPTUREBLT,
         )
-        bits = gdi.GetDIBits(
+
+        bits = self._gdi.GetDIBits(
             self._memdc, self._bmp, 0, height, self._data, self._bmi, DIB_RGB_COLORS
         )
         if bits != height:
